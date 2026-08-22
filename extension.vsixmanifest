@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="rommmmaha.qol" Version="0.0.0" Language="en-US" Publisher="rommmmaha" />
+    <DisplayName>QOL</DisplayName>
+    <Description>Quality of life: bookmarked project paths as a sidebar tree.</Description>
+    <Tags>bookmarks,projects,sidebar,workspace</Tags>
+    <Categories>Themes,Other</Categories>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Code" />
+  </Installation>
+  <Dependencies />
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.Code.Manifest" Path="extension/package.json" Addressable="true" />
+    <Asset Type="Microsoft.VisualStudio.Theme" Path="extension/colors.json" Addressable="true" />
+  </Assets>
+</PackageManifest>

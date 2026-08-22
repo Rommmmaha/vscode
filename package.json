@@ -1,0 +1,113 @@
+{
+  "name": "qol",
+  "displayName": "QOL",
+  "version": "0.0.0",
+  "publisher": "rommmmaha",
+  "description": "Quality of life: bookmarked project paths as a sidebar tree.",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Themes",
+    "Other"
+  ],
+  "keywords": [
+    "bookmarks",
+    "projects",
+    "sidebar",
+    "workspace"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "themes": [
+      {
+        "label": "Perfect Midnight",
+        "uiTheme": "vs-dark",
+        "path": "./colors.json"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "qol",
+          "title": "Bookmarks",
+          "icon": "./icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "qol": [
+        {
+          "id": "qolBookmarks",
+          "name": "Bookmarks"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "qol.refresh",
+        "title": "Refresh Bookmarks",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "qol.addBookmark",
+        "title": "Bookmark Current Folder",
+        "icon": "$(bookmark)"
+      },
+      {
+        "command": "qol.removeBookmark",
+        "title": "Remove Bookmark",
+        "icon": "$(bookmark-remove)"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "qol.addBookmark"
+        },
+        {
+          "command": "qol.removeBookmark"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "qol.refresh",
+          "when": "view == qolBookmarks"
+        },
+        {
+          "command": "qol.addBookmark",
+          "when": "view == qolBookmarks"
+        },
+        {
+          "command": "qol.removeBookmark",
+          "when": "view == qolBookmarks"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "QOL",
+      "properties": {
+        "qol.bookmarks": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "description": "List of project paths to bookmark. Supports ~ and $HOME for home directory."
+        }
+      }
+    }
+  },
+  "icon": "./icon.png",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^26.2.0",
+    "@types/vscode": "^1.134.0",
+    "@vscode/vsce": "^3.9.2"
+  },
+  "peerDependencies": {
+    "typescript": "^7.0.2"
+  }
+}
