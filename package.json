@@ -47,17 +47,17 @@
     "commands": [
       {
         "command": "qol.refresh",
-        "title": "Refresh Bookmarks",
+        "title": "QOL: Bookmarks refresh",
         "icon": "$(refresh)"
       },
       {
         "command": "qol.addBookmark",
-        "title": "Bookmark Current Folder",
+        "title": "QOL: Bookmark add",
         "icon": "$(bookmark)"
       },
       {
         "command": "qol.removeBookmark",
-        "title": "Remove Bookmark",
+        "title": "QOL: Bookmark remove",
         "icon": "$(bookmark-remove)"
       }
     ],
