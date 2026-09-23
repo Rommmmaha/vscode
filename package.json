@@ -94,7 +94,7 @@
           "items": {
             "type": "string"
           },
-          "description": "List of project paths to bookmark. Supports ~ and $HOME for home directory."
+          "description": "List of project paths to bookmark. Supports ~ and $HOME for home directory. Append /* to include all level 1 subdirectories."
         }
       }
     }
