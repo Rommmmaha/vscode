@@ -87,7 +87,7 @@ class BookmarkItem extends vscode.TreeItem {
     super(node.name || node.fullPath, node.isDirectory ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.None);
     if (!node.isDirectory) {
       this.command = {
-        command: "qol.openWorkspace",
+        command: "r-qol.openWorkspace",
         title: "Open",
         arguments: [this]
       };
@@ -104,7 +104,7 @@ class BookmarkProvider implements vscode.TreeDataProvider<BookmarkItem> {
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
   private tree: TreeNode = buildTree([]);
   refresh() {
-    const config = vscode.workspace.getConfiguration("qol");
+    const config = vscode.workspace.getConfiguration("r-qol");
     const paths: string[] = config.get<string[]>("bookmarks", []);
     return expandWildcardPaths(paths).then((expanded) => {
       this.tree = buildTree(expanded);
@@ -126,37 +126,37 @@ class BookmarkProvider implements vscode.TreeDataProvider<BookmarkItem> {
 }
 export function activate(context: vscode.ExtensionContext) {
   const provider = new BookmarkProvider();
-  vscode.window.registerTreeDataProvider("qolBookmarks", provider);
+  context.subscriptions.push(vscode.window.registerTreeDataProvider("r-qolBookmarks", provider));
   void provider.refresh();
   function currentFolder(): string | undefined {
     const folders = vscode.workspace.workspaceFolders;
     return folders?.[0]?.uri.fsPath;
   }
   async function updateBookmarks(mutator: (paths: string[]) => string[]) {
-    const config = vscode.workspace.getConfiguration("qol");
+    const config = vscode.workspace.getConfiguration("r-qol");
     const paths: string[] = config.get<string[]>("bookmarks", []);
     await config.update("bookmarks", mutator(paths), vscode.ConfigurationTarget.Global);
   }
   context.subscriptions.push(
-    vscode.commands.registerCommand("qol.refresh", () => void provider.refresh()),
-    vscode.commands.registerCommand("qol.openWorkspace", async (item: BookmarkItem) => {
+    vscode.commands.registerCommand("r-qol.refresh", () => void provider.refresh()),
+    vscode.commands.registerCommand("r-qol.openWorkspace", async (item: BookmarkItem) => {
       const uri = vscode.Uri.file(item.node.fullPath);
       await vscode.commands.executeCommand("vscode.openFolder", uri);
     }),
-    vscode.commands.registerCommand("qol.addBookmark", async () => {
+    vscode.commands.registerCommand("r-qol.addBookmark", async () => {
       const folder = currentFolder();
       if (!folder) return vscode.window.showWarningMessage("No workspace open");
       await updateBookmarks((paths) => (paths.includes(folder) ? paths : [...paths, folder]));
       vscode.window.showInformationMessage(`Bookmarked: ${folder}`);
     }),
-    vscode.commands.registerCommand("qol.removeBookmark", async () => {
+    vscode.commands.registerCommand("r-qol.removeBookmark", async () => {
       const folder = currentFolder();
       if (!folder) return vscode.window.showWarningMessage("No workspace open");
       await updateBookmarks((paths) => paths.filter((p) => p !== folder));
       vscode.window.showInformationMessage(`Removed: ${folder}`);
     }),
     vscode.workspace.onDidChangeConfiguration((e) => {
-      if (e.affectsConfiguration("qol.bookmarks")) {
+      if (e.affectsConfiguration("r-qol.bookmarks")) {
         void provider.refresh();
       }
     })

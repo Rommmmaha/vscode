@@ -1,12 +1,12 @@
 {
-  "name": "qol",
-  "displayName": "QOL",
+  "name": "r-qol",
+  "displayName": "R-QoL",
   "version": "0.0.0",
   "publisher": "rommmmaha",
   "description": "Quality of life: bookmarked project paths as a sidebar tree.",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.74.0"
+    "vscode": "^1.138.0"
   },
   "categories": [
     "Themes",
@@ -30,65 +30,69 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "qol",
+          "id": "r-qol",
           "title": "Bookmarks",
           "icon": "./icon.svg"
         }
       ]
     },
     "views": {
-      "qol": [
+      "r-qol": [
         {
-          "id": "qolBookmarks",
+          "id": "r-qolBookmarks",
           "name": "Bookmarks"
         }
       ]
     },
     "commands": [
       {
-        "command": "qol.refresh",
-        "title": "QOL: Bookmarks refresh",
+        "command": "r-qol.refresh",
+        "title": "R-QoL: Bookmarks refresh",
         "icon": "$(refresh)"
       },
       {
-        "command": "qol.addBookmark",
-        "title": "QOL: Bookmark add",
+        "command": "r-qol.addBookmark",
+        "title": "R-QoL: Bookmark add",
         "icon": "$(bookmark)"
       },
       {
-        "command": "qol.removeBookmark",
-        "title": "QOL: Bookmark remove",
+        "command": "r-qol.removeBookmark",
+        "title": "R-QoL: Bookmark remove",
         "icon": "$(bookmark-remove)"
+      },
+      {
+        "command": "r-qol.openWorkspace",
+        "title": "R-QoL: Open bookmark"
       }
     ],
     "menus": {
       "commandPalette": [
         {
-          "command": "qol.addBookmark"
+          "command": "r-qol.addBookmark"
         },
         {
-          "command": "qol.removeBookmark"
+          "command": "r-qol.removeBookmark"
         }
       ],
       "view/title": [
         {
-          "command": "qol.refresh",
-          "when": "view == qolBookmarks"
+          "command": "r-qol.refresh",
+          "when": "view == r-qolBookmarks"
         },
         {
-          "command": "qol.addBookmark",
-          "when": "view == qolBookmarks"
+          "command": "r-qol.addBookmark",
+          "when": "view == r-qolBookmarks"
         },
         {
-          "command": "qol.removeBookmark",
-          "when": "view == qolBookmarks"
+          "command": "r-qol.removeBookmark",
+          "when": "view == r-qolBookmarks"
         }
       ]
     },
     "configuration": {
-      "title": "QOL",
+      "title": "R-QoL",
       "properties": {
-        "qol.bookmarks": {
+        "r-qol.bookmarks": {
           "type": "array",
           "default": [],
           "items": {
