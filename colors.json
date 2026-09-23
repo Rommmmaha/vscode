@@ -228,14 +228,14 @@
       }
     },
     {
-      "name": "Punctuation",
-      "scope": ["punctuation", "meta.brace"],
+      "name": "Punctuation & Operators",
+      "scope": ["punctuation", "keyword.operator", "meta.brace"],
       "settings": {
-        "foreground": "#555555"
+        "foreground": "#aaaaaa"
       }
     },
     {
-      "name": "Keywords",
+      "name": "Keywords & Storage",
       "scope": [
         "keyword",
         "keyword.control",
@@ -244,35 +244,26 @@
         "control.elements"
       ],
       "settings": {
-        "foreground": "#e89954"
+        "foreground": "#6bb3fb"
       }
     },
     {
-      "name": "Functions",
+      "name": "Functions & Variables",
       "scope": [
         "entity.name.function",
         "support.function",
-        "meta.function-call.generic"
-      ],
-      "settings": {
-        "foreground": "#cdaa41"
-      }
-    },
-    {
-      "name": "Variables",
-      "scope": [
+        "meta.function-call.generic",
         "variable",
         "variable.other",
         "variable.language",
-        "variable.parameter",
-        "keyword.operator"
+        "variable.parameter"
       ],
       "settings": {
-        "foreground": "#aaaaaa"
+        "foreground": "#ffffff"
       }
     },
     {
-      "name": "Types",
+      "name": "Types, Classes & Interfaces",
       "scope": [
         "entity.name.type",
         "entity.name.class",
@@ -281,18 +272,18 @@
         "entity.other.inherited-class"
       ],
       "settings": {
-        "foreground": "#13c3da"
+        "foreground": "#6bb3fb"
       }
     },
     {
       "name": "Strings",
       "scope": ["string", "punctuation.definition.string"],
       "settings": {
-        "foreground": "#6bb3fb"
+        "foreground": "#e89954"
       }
     },
     {
-      "name": "Constants",
+      "name": "Numbers, Booleans & Constants",
       "scope": [
         "constant.numeric",
         "constant.language.boolean",
@@ -304,7 +295,7 @@
       }
     },
     {
-      "name": "Keys and Tags",
+      "name": "Object Keys, Properties & Tags",
       "scope": [
         "meta.object-literal.key",
         "entity.name.tag",
@@ -313,7 +304,7 @@
         "variable.other.object.property"
       ],
       "settings": {
-        "foreground": "#555555"
+        "foreground": "#aaaaaa"
       }
     },
     {
