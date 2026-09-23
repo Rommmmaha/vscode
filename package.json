@@ -22,7 +22,7 @@
   "contributes": {
     "themes": [
       {
-        "label": "Perfect Midnight",
+        "label": "VoidFrame",
         "uiTheme": "vs-dark",
         "path": "./colors.json"
       }

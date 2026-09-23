@@ -1,8 +1,7 @@
-import * as vscode from 'vscode';
-import * as path from 'path';
-import * as os from 'os';
-import * as fs from 'fs/promises';
-
+import * as vscode from "vscode";
+import * as path from "path";
+import * as os from "os";
+import * as fs from "fs/promises";
 interface TreeNode {
   name: string;
   fullPath: string;
@@ -10,14 +9,12 @@ interface TreeNode {
   isLeaf: boolean;
   children: Map<string, TreeNode>;
 }
-
 function buildTree(paths: string[]): TreeNode {
-  const root: TreeNode = { name: '', fullPath: '', isDirectory: true, isLeaf: false, children: new Map() };
-
+  const root: TreeNode = { name: "", fullPath: "", isDirectory: true, isLeaf: false, children: new Map() };
   for (const raw of paths) {
     const resolved = resolveHome(raw);
     const isAbs = path.isAbsolute(resolved);
-    const rootPrefix = isAbs ? path.parse(resolved).root : '';
+    const rootPrefix = isAbs ? path.parse(resolved).root : "";
     const parts = resolved.split(path.sep).filter(Boolean);
     let current = root;
     for (let i = 0; i < parts.length; i++) {
@@ -29,7 +26,7 @@ function buildTree(paths: string[]): TreeNode {
           fullPath: rootPrefix + parts.slice(0, i + 1).join(path.sep),
           isDirectory: !isLast,
           isLeaf: isLast,
-          children: new Map(),
+          children: new Map()
         });
       }
       const node = current.children.get(part)!;
@@ -42,24 +39,21 @@ function buildTree(paths: string[]): TreeNode {
   }
   return root;
 }
-
 function isWildcardPath(raw: string): boolean {
-  const noTrail = raw.trim().replace(/[/\\]+$/, '');
-  return noTrail.endsWith('/*') || noTrail.endsWith('\\*') || noTrail === '*';
+  const noTrail = raw.trim().replace(/[/\\]+$/, "");
+  return noTrail.endsWith("/*") || noTrail.endsWith("\\*") || noTrail === "*";
 }
-
 function stripWildcard(raw: string): string {
-  const noTrail = raw.trim().replace(/[/\\]+$/, '');
-  if (noTrail.endsWith('/*') || noTrail.endsWith('\\*')) {
+  const noTrail = raw.trim().replace(/[/\\]+$/, "");
+  if (noTrail.endsWith("/*") || noTrail.endsWith("\\*")) {
     const base = noTrail.slice(0, -2);
-    return base === '' ? path.sep : base;
+    return base === "" ? path.sep : base;
   }
-  if (noTrail === '*') {
+  if (noTrail === "*") {
     return path.sep;
   }
   return noTrail;
 }
-
 async function expandWildcardPaths(paths: string[]): Promise<string[]> {
   const out: string[] = [];
   for (const raw of paths) {
@@ -68,7 +62,7 @@ async function expandWildcardPaths(paths: string[]): Promise<string[]> {
       continue;
     }
     const baseResolved = resolveHome(stripWildcard(raw));
-    const base = baseResolved === '' ? path.sep : baseResolved;
+    const base = baseResolved === "" ? path.sep : baseResolved;
     try {
       const entries = await fs.readdir(base, { withFileTypes: true });
       for (const entry of entries) {
@@ -82,50 +76,44 @@ async function expandWildcardPaths(paths: string[]): Promise<string[]> {
   }
   return out;
 }
-
 function resolveHome(p: string): string {
-  if (p.startsWith('~') || (p.startsWith('$HOME') && os.platform() !== 'win32')) {
-    return path.join(os.homedir(), p.slice(p[0] === '~' ? 1 : 5));
+  if (p.startsWith("~") || (p.startsWith("$HOME") && os.platform() !== "win32")) {
+    return path.join(os.homedir(), p.slice(p[0] === "~" ? 1 : 5));
   }
   return p;
 }
-
 class BookmarkItem extends vscode.TreeItem {
   constructor(public readonly node: TreeNode) {
     super(node.name || node.fullPath, node.isDirectory ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.None);
     if (!node.isDirectory) {
       this.command = {
-        command: 'qol.openWorkspace',
-        title: 'Open',
-        arguments: [this],
+        command: "qol.openWorkspace",
+        title: "Open",
+        arguments: [this]
       };
       this.description = node.fullPath;
       this.tooltip = node.fullPath;
       this.iconPath = vscode.ThemeIcon.File;
     } else {
-      this.iconPath = new vscode.ThemeIcon('folder');
+      this.iconPath = new vscode.ThemeIcon("folder");
     }
   }
 }
-
 class BookmarkProvider implements vscode.TreeDataProvider<BookmarkItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<BookmarkItem | undefined>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
   private tree: TreeNode = buildTree([]);
-
   refresh() {
-    const config = vscode.workspace.getConfiguration('qol');
-    const paths: string[] = config.get<string[]>('bookmarks', []);
-    return expandWildcardPaths(paths).then(expanded => {
+    const config = vscode.workspace.getConfiguration("qol");
+    const paths: string[] = config.get<string[]>("bookmarks", []);
+    return expandWildcardPaths(paths).then((expanded) => {
       this.tree = buildTree(expanded);
       this._onDidChangeTreeData.fire(undefined);
     });
   }
-
   getTreeItem(element: BookmarkItem): vscode.TreeItem {
     return element;
   }
-
   getChildren(element?: BookmarkItem): BookmarkItem[] {
     const node = element ? element.node : this.tree;
     return Array.from(node.children.values())
@@ -133,48 +121,44 @@ class BookmarkProvider implements vscode.TreeDataProvider<BookmarkItem> {
         if (a.isDirectory !== b.isDirectory) return a.isDirectory ? -1 : 1;
         return a.name.localeCompare(b.name);
       })
-      .map(n => new BookmarkItem(n));
+      .map((n) => new BookmarkItem(n));
   }
 }
-
 export function activate(context: vscode.ExtensionContext) {
   const provider = new BookmarkProvider();
-  vscode.window.registerTreeDataProvider('qolBookmarks', provider);
+  vscode.window.registerTreeDataProvider("qolBookmarks", provider);
   void provider.refresh();
-
   function currentFolder(): string | undefined {
     const folders = vscode.workspace.workspaceFolders;
     return folders?.[0]?.uri.fsPath;
   }
-
   async function updateBookmarks(mutator: (paths: string[]) => string[]) {
-    const config = vscode.workspace.getConfiguration('qol');
-    const paths: string[] = config.get<string[]>('bookmarks', []);
-    await config.update('bookmarks', mutator(paths), vscode.ConfigurationTarget.Global);
+    const config = vscode.workspace.getConfiguration("qol");
+    const paths: string[] = config.get<string[]>("bookmarks", []);
+    await config.update("bookmarks", mutator(paths), vscode.ConfigurationTarget.Global);
   }
-
   context.subscriptions.push(
-    vscode.commands.registerCommand('qol.refresh', () => void provider.refresh()),
-    vscode.commands.registerCommand('qol.openWorkspace', async (item: BookmarkItem) => {
+    vscode.commands.registerCommand("qol.refresh", () => void provider.refresh()),
+    vscode.commands.registerCommand("qol.openWorkspace", async (item: BookmarkItem) => {
       const uri = vscode.Uri.file(item.node.fullPath);
-      await vscode.commands.executeCommand('vscode.openFolder', uri);
+      await vscode.commands.executeCommand("vscode.openFolder", uri);
     }),
-    vscode.commands.registerCommand('qol.addBookmark', async () => {
+    vscode.commands.registerCommand("qol.addBookmark", async () => {
       const folder = currentFolder();
-      if (!folder) return vscode.window.showWarningMessage('No workspace open');
-      await updateBookmarks(paths => paths.includes(folder) ? paths : [...paths, folder]);
+      if (!folder) return vscode.window.showWarningMessage("No workspace open");
+      await updateBookmarks((paths) => (paths.includes(folder) ? paths : [...paths, folder]));
       vscode.window.showInformationMessage(`Bookmarked: ${folder}`);
     }),
-    vscode.commands.registerCommand('qol.removeBookmark', async () => {
+    vscode.commands.registerCommand("qol.removeBookmark", async () => {
       const folder = currentFolder();
-      if (!folder) return vscode.window.showWarningMessage('No workspace open');
-      await updateBookmarks(paths => paths.filter(p => p !== folder));
+      if (!folder) return vscode.window.showWarningMessage("No workspace open");
+      await updateBookmarks((paths) => paths.filter((p) => p !== folder));
       vscode.window.showInformationMessage(`Removed: ${folder}`);
     }),
-    vscode.workspace.onDidChangeConfiguration(e => {
-      if (e.affectsConfiguration('qol.bookmarks')) {
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration("qol.bookmarks")) {
         void provider.refresh();
       }
-    }),
+    })
   );
 }
