@@ -40,7 +40,8 @@
       "r-qol": [
         {
           "id": "r-qolBookmarks",
-          "name": "Bookmarks"
+          "name": "Bookmarks",
+          "icon": "$(bookmark)"
         }
       ]
     },
