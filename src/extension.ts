@@ -76,6 +76,19 @@ async function expandWildcardPaths(paths: string[]): Promise<string[]> {
   }
   return out;
 }
+async function filterExisting(paths: string[]): Promise<string[]> {
+  const checks = await Promise.all(
+    paths.map(async (p) => {
+      try {
+        await fs.stat(resolveHome(p));
+        return p;
+      } catch {
+        return null;
+      }
+    })
+  );
+  return checks.filter((p): p is string => p !== null);
+}
 function resolveHome(p: string): string {
   if (p.startsWith("~") || (p.startsWith("$HOME") && os.platform() !== "win32")) {
     return path.join(os.homedir(), p.slice(p[0] === "~" ? 1 : 5));
@@ -106,8 +119,8 @@ class BookmarkProvider implements vscode.TreeDataProvider<BookmarkItem> {
   refresh() {
     const config = vscode.workspace.getConfiguration("r-qol");
     const paths: string[] = config.get<string[]>("bookmarks", []);
-    return expandWildcardPaths(paths).then((expanded) => {
-      this.tree = buildTree(expanded);
+    return expandWildcardPaths(paths).then(async (expanded) => {
+      this.tree = buildTree(await filterExisting(expanded));
       this._onDidChangeTreeData.fire(undefined);
     });
   }
