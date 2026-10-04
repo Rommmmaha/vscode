@@ -70,8 +70,8 @@ async function expandWildcardPaths(paths: string[]): Promise<string[]> {
           out.push(path.join(base, entry.name));
         }
       }
-    } catch {
-      // Missing or unreadable base dir: skip silently.
+    } catch (e) {
+      console.warn(`[r-qol] skipping unreadable wildcard base "${raw}":`, e);
     }
   }
   return out;
@@ -82,7 +82,8 @@ async function filterExisting(paths: string[]): Promise<string[]> {
       try {
         await fs.stat(resolveHome(p));
         return p;
-      } catch {
+      } catch (e) {
+        console.warn(`[r-qol] skipping unresolvable bookmark "${p}":`, e);
         return null;
       }
     })
